@@ -6,6 +6,7 @@ Run from the project directory (not the tests directory) with the invocation `py
 import streamlit as st
 from streamlit.testing.v1 import AppTest
 
+
 def test_button_increments_counter():
     """Test that the counter increments when the button is clicked."""
     at = AppTest.from_file("app.py").run()
@@ -20,17 +21,81 @@ def test_button_increments_counter():
     # Assert that the counter has been incremented
     assert at.session_state.count == 2
 
+
 def test_button_decrements_counter():
-    # TODO test that the decrement button works
-    pass
+    """Test that the decrement button works."""
+    at = AppTest.from_file("app.py").run()
+
+    # Initialize the session state
+    at.session_state.count = 3
+    at.session_state.ten_x = False
+
+    # Click the decrement button
+    at.button(key="decrement").click().run()
+
+    # Assert that the counter has been decremented by 1
+    assert at.session_state.count == 2
+
 
 def test_button_increments_counter_ten_x():
-    # TODO test that the increment button works in ten_x mode
-    pass
+    """Test that the increment button works in ten_x mode."""
+    at = AppTest.from_file("app.py").run()
+
+    # Initialize the session state
+    at.session_state.count = 5
+    at.session_state.ten_x = True
+
+    # Click the increment button
+    at.button(key="increment").click().run()
+
+    # Assert that the counter has been incremented by 10
+    assert at.session_state.count == 15
+
 
 def test_button_decrements_counter_ten_x():
-    # TODO test that the decrement button works in ten_x mode
-    pass
+    """Test that the decrement button works in ten_x mode."""
+    at = AppTest.from_file("app.py").run()
+
+    # Initialize the session state
+    at.session_state.count = 25
+    at.session_state.ten_x = True
+
+    # Click the decrement button
+    at.button(key="decrement").click().run()
+
+    # Assert that the counter has been decremented by 10
+    assert at.session_state.count == 15
+
+
+def test_decrement_does_not_go_below_zero():
+    """Test that the count does not go below 0 in normal mode."""
+    at = AppTest.from_file("app.py").run()
+
+    # Initialize the session state
+    at.session_state.count = 0
+    at.session_state.ten_x = False
+
+    # Click the decrement button
+    at.button(key="decrement").click().run()
+
+    # Assert that the counter stays at 0
+    assert at.session_state.count == 0
+
+
+def test_decrement_does_not_go_below_zero_ten_x():
+    """Test that the count does not go below 0 in ten_x mode."""
+    at = AppTest.from_file("app.py").run()
+
+    # Initialize the session state
+    at.session_state.count = 5
+    at.session_state.ten_x = True
+
+    # Click the decrement button
+    at.button(key="decrement").click().run()
+
+    # Assert that the counter stays at 0 instead of going negative
+    assert at.session_state.count == 0
+
 
 def test_output_text_correct():
     """Test that the text shows the correct value."""
